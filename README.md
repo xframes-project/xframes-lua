@@ -2,7 +2,7 @@
 
 `luajit src/main.lua`
 
-## Windows
+## Instructions
 
 ### Install Lua
 
@@ -21,3 +21,10 @@ Open a PowerShell terminal then run (replace <USER> with your username):
 ## Linux
 
 If you need help, please raise an issue on GitHub
+
+## Screenshots
+
+Windows 11
+
+![image](https://github.com/user-attachments/assets/2d91db8e-57ba-4b94-86ad-a9972b589209)
+
