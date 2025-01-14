@@ -20,7 +20,9 @@ Open a PowerShell terminal then run (replace <USER> with your username):
 
 ## Linux
 
-If you need help, please raise an issue on GitHub
+The `luajit2` and `luarocks` packages should be available on Debian-like distros, including Ubuntu.
+
+I had to run `sudo luarocks install dkjson`.
 
 ## Screenshots
 
