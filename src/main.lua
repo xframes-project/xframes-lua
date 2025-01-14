@@ -178,10 +178,10 @@ ffi.cdef[[
     );
 ]]
 
--- Load the shared library
-local xframes = ffi.load("xframesshared")
+local os_name = package.config:sub(1,1) == "\\" and "win" or "unix"
 
--- Define the Lua callbacks
+local xframes = ffi.load(os_name == "win" and "xframesshared" or "./libxframesshared.so")
+
 local function onInit()
     print("Initialization complete!")
 
