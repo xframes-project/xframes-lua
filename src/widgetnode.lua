@@ -1,3 +1,5 @@
+local WidgetTypes = require("widgettypes")
+
 local module = {}
 
 function module.widget_node_factory(widgetType, props, children)

@@ -113,7 +113,7 @@ module.ImGuiStyleVar = {
     SeparatorTextPadding = 31
 }
 
-module.ImPlotMarker = {
+module.ImGuiDir = {
     None_ = -1,
     Left = 0,
     Right = 1,
@@ -208,7 +208,7 @@ function module.is_valid_colors(input)
     end
 
     local is_valid = true
-    for key, _ in pairs(input.colors) do
+    for key, _ in pairs(input) do
         if not module.table_contains(module.ImGuiCol, key) then
             is_valid = false
             break
@@ -224,7 +224,7 @@ function module.is_valid_style_vars(input)
     end
 
     local is_valid = true
-    for key, _ in pairs(input.colors) do
+    for key, _ in pairs(input) do
         if not module.table_contains(module.ImGuiStyleVar, key) then
             is_valid = false
             break
