@@ -1,6 +1,6 @@
+local ffi = require("ffi")
 local dkjson = require("dkjson")
 
-local BehaviorSubject = require("behaviorsubject")
 local theme = require("theme")
 local sampleapp = require("sampleapp")
 local utils = require("utils")
@@ -150,22 +150,6 @@ end
 local function onClick()
     print("Button clicked!")
 end
-
-local subject = BehaviorSubject.new(42)
-
-local unsubscribe = subject:subscribe(
-    function(x) print("Received:", x) end,
-    function(err) print("Error:", err) end,
-    function() print("Completed") end
-)
-
-subject:onNext(56)
-
-print("Current value:", subject:getValue())
-
-subject:onCompleted()
-
-unsubscribe()
 
 xframes.init(
     "../assets",

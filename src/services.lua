@@ -1,5 +1,5 @@
 local dkjson = require("dkjson")
-local ReplaySubject = require("ReplaySubject")
+local ReplaySubject = require("replaysubject")
 local operators = require("operators")
 local xframes = require("xframes")
 
@@ -9,7 +9,9 @@ WidgetRegistrationService.__index = WidgetRegistrationService
 function WidgetRegistrationService.new()
     local self = setmetatable({}, WidgetRegistrationService)
     self.events_subject = ReplaySubject.new(10)
-    self.events_subject:pipe(operators.debounce(1)):subscribe(function(fn) fn() end)
+    
+    local debounced = self.events_subject:pipe(operators.debounce(1))
+    debounced:subscribe(function(fn) fn() end)
 
     self.widget_registry = {}
     self.on_click_registry = {}
@@ -44,6 +46,9 @@ function WidgetRegistrationService:register_on_click(widget_id, on_click)
 end
 
 function WidgetRegistrationService:dispatch_on_click_event(widget_id)
+    if not self.widget_registry[widget_id] then
+        error(string.format("Widget with id %d does not exist", widget_id))
+    end
     local on_click = self.on_click_registry[widget_id]
     if self.on_click_registry[widget_id] then
         self.events_subject:onNext(on_click)

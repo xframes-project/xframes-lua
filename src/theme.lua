@@ -200,15 +200,17 @@ function module.is_valid_colors(input)
     if type(input) ~= "table" then
         return false
     end
-
     local is_valid = true
-    for key, _ in pairs(input) do
-        if not utils.table_contains(module.ImGuiCol, key) then
+    for key, value in pairs(input) do
+        if not module.table_contains(module.ImGuiCol, key) then
+            is_valid = false
+            break
+        end
+        if not module.is_valid_color_value(value) then
             is_valid = false
             break
         end
     end
-
     return is_valid
 end
 
@@ -301,14 +303,13 @@ end
 
 function module.is_valid_color_value(input)
     if type(input) == "string" then
-        return true
+        return input:match("^#[0-9A-Fa-f]{6}$") ~= nil
     end
     if type(input) == "table" then
         if #input == 2 and type(input[1]) == "string" and type(input[2]) == "number" then
-            return true
+            return input[1]:match("^#[0-9A-Fa-f]{6}$") ~= nil and input[2] >= 0 and input[2] <= 1
         end
     end
-
     return false
 end
 
