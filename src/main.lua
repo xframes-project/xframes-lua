@@ -1,12 +1,11 @@
 local dkjson = require("dkjson")
-local ffi = require("ffi")
 
 local BehaviorSubject = require("behaviorsubject")
-
 local theme = require("theme")
-
 local sampleapp = require("sampleapp")
 local utils = require("utils")
+local WidgetRegistrationservice = require("services")
+local xframes = require("xframes")
 
 print(utils.table_to_string(sampleapp.button_style))
 
@@ -43,7 +42,7 @@ local theme2Colors = {
     white = "#fff",
   }
 
-  local theme2 = {
+local theme2 = {
     colors = {
       [theme.ImGuiCol.Text] = {theme2Colors.white, 1},
       [theme.ImGuiCol.TextDisabled] = {theme2Colors.lighterGrey, 1},
@@ -103,36 +102,7 @@ local theme2Colors = {
 
 local theme2Json = dkjson.encode(theme2)
 
--- Declare the C function and callback types
-ffi.cdef[[
-    void setElement(const char* elementJson);
-    void setChildren(int id, const char* childrenIds);
-
-    typedef void (*OnInitCb)();
-    typedef void (*OnTextChangedCb)(const char* text);
-    typedef void (*OnComboChangedCb)(int index);
-    typedef void (*OnNumericValueChangedCb)(double value);
-    typedef void (*OnBooleanValueChangedCb)(int value); // 0 or 1 for false/true
-    typedef void (*OnMultipleNumericValuesChangedCb)(double* values, int count);
-    typedef void (*OnClickCb)();
-
-    void init(
-        const char* assetsBasePath,
-        const char* rawFontDefinitions,
-        const char* rawStyleOverrideDefinitions,
-        OnInitCb onInit,
-        OnTextChangedCb onTextChanged,
-        OnComboChangedCb onComboChanged,
-        OnNumericValueChangedCb onNumericValueChanged,
-        OnBooleanValueChangedCb onBooleanValueChanged,
-        OnMultipleNumericValuesChangedCb onMultipleNumericValuesChanged,
-        OnClickCb onClick
-    );
-]]
-
-local os_name = package.config:sub(1,1) == "\\" and "win" or "unix"
-
-local xframes = ffi.load(os_name == "win" and "xframesshared" or "./libxframesshared.so")
+local widget_registration_service = WidgetRegistrationservice.new()
 
 local function onInit()
     print("Initialization complete!")

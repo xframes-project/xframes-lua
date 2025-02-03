@@ -28,6 +28,7 @@ The `luajit2` and `luarocks` packages should be available on Ubuntu.
 
 - `luarocks install dkjson`
 - `luarocks install array`
+- `luarocks install luv`
 
 On Linux you may need to run these as `sudo`.
 

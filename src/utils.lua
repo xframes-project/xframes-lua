@@ -24,4 +24,13 @@ function module.table_to_string(t, indent)
     return table.concat(result, "\n")
 end
 
+function module.table_contains(tbl, val)
+    for _, v in pairs(tbl) do
+        if v == val then
+            return true
+        end
+    end
+    return false
+end
+
 return module

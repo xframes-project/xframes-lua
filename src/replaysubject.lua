@@ -1,16 +1,17 @@
-local BehaviorSubject = {}
-BehaviorSubject.__index = BehaviorSubject
+local ReplaySubject = {}
+ReplaySubject.__index = ReplaySubject
 
-function BehaviorSubject.new(initialValue)
-    local self = setmetatable({}, BehaviorSubject)
-    self.value = initialValue
+function ReplaySubject.new(bufferSize)
+    local self = setmetatable({}, ReplaySubject)
     self.observers = {}
+    self.buffer = {}
+    self.bufferSize = bufferSize or math.huge
     self.isCompleted = false
     self.error = nil
     return self
 end
 
-function BehaviorSubject:subscribe(onNext, onError, onCompleted)
+function ReplaySubject:subscribe(onNext, onError, onCompleted)
     if self.isCompleted then
         if onCompleted then onCompleted() end
         return
@@ -23,8 +24,8 @@ function BehaviorSubject:subscribe(onNext, onError, onCompleted)
     local observer = {onNext = onNext, onError = onError, onCompleted = onCompleted}
     table.insert(self.observers, observer)
     
-    if self.value ~= nil then
-        onNext(self.value)
+    for _, value in ipairs(self.buffer) do
+        onNext(value)
     end
     
     return function()
@@ -37,22 +38,20 @@ function BehaviorSubject:subscribe(onNext, onError, onCompleted)
     end
 end
 
-function BehaviorSubject:getValue()
-    if self.error then
-        error(self.error)
-    end
-    return self.value
-end
-
-function BehaviorSubject:onNext(value)
+function ReplaySubject:onNext(value)
     if self.isCompleted or self.error then return end
-    self.value = value
+    
+    table.insert(self.buffer, value)
+    if #self.buffer > self.bufferSize then
+        table.remove(self.buffer, 1)
+    end
+    
     for _, observer in ipairs(self.observers) do
         observer.onNext(value)
     end
 end
 
-function BehaviorSubject:onError(err)
+function ReplaySubject:error(err)
     if self.isCompleted or self.error then return end
     self.error = err
     for _, observer in ipairs(self.observers) do
@@ -60,7 +59,7 @@ function BehaviorSubject:onError(err)
     end
 end
 
-function BehaviorSubject:onCompleted()
+function ReplaySubject:complete()
     if self.isCompleted or self.error then return end
     self.isCompleted = true
     for _, observer in ipairs(self.observers) do
@@ -68,11 +67,11 @@ function BehaviorSubject:onCompleted()
     end
 end
 
-function BehaviorSubject:hasObservers()
+function ReplaySubject:hasObservers()
     return #self.observers > 0
 end
 
-function BehaviorSubject:pipe(...)
+function ReplaySubject:pipe(...)
     local funcs = {...}
     local result = self
     for _, fn in ipairs(funcs) do
@@ -81,4 +80,4 @@ function BehaviorSubject:pipe(...)
     return result
 end
 
-return BehaviorSubject
+return ReplaySubject

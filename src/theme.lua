@@ -1,5 +1,6 @@
 local bit = require("bit")
 local array = require("array")
+local utils = require("utils")
 
 local module = {}
 
@@ -195,16 +196,6 @@ module.Align = {
     Right = "right"
 }
 
--- todo: move to utils.lua
-function module.table_contains(tbl, val)
-    for _, v in pairs(tbl) do
-        if v == val then
-            return true
-        end
-    end
-    return false
-end
-
 function module.is_valid_colors(input)
     if type(input) ~= "table" then
         return false
@@ -212,7 +203,7 @@ function module.is_valid_colors(input)
 
     local is_valid = true
     for key, _ in pairs(input) do
-        if not module.table_contains(module.ImGuiCol, key) then
+        if not utils.table_contains(module.ImGuiCol, key) then
             is_valid = false
             break
         end
@@ -228,7 +219,7 @@ function module.is_valid_style_vars(input)
 
     local is_valid = true
     for key, _ in pairs(input) do
-        if not module.table_contains(module.ImGuiStyleVar, key) then
+        if not utils.table_contains(module.ImGuiStyleVar, key) then
             is_valid = false
             break
         end
@@ -244,7 +235,7 @@ function module.is_valid_edge_based_values_table(input)
 
     local is_valid = true
     for key, value in pairs(input) do
-        if not module.table_contains(module.Edge, key) or type(value) ~= "number" then
+        if not utils.table_contains(module.Edge, key) or type(value) ~= "number" then
             is_valid = false
             break
         end
@@ -260,7 +251,7 @@ function module.is_valid_gutter_based_values_table(input)
 
     local is_valid = true
     for key, value in pairs(input) do
-        if not module.table_contains(module.Gutter, key) or type(value) ~= "number" then
+        if not utils.table_contains(module.Gutter, key) or type(value) ~= "number" then
             is_valid = false
             break
         end
@@ -304,7 +295,7 @@ function module.is_valid_round_corners(input)
     end
     
     return array.every(input.roundCorners, function(value)
-        return module.table_contains(module.RoundCorners, value)
+        return utils.table_contains(module.RoundCorners, value)
     end)
 end
 
@@ -328,7 +319,7 @@ function module.StyleRules(input)
 
     local style_rules = {}
 
-    if type(input.align) == "string" and module.table_contains(module.Align, input.align) then
+    if type(input.align) == "string" and utils.table_contains(module.Align, input.align) then
         style_rules.align = input.align
     end
 
@@ -474,43 +465,43 @@ function module.YogaStyle(input)
 
     local yoga_style = {}
 
-    if type(input.direction) == "string" and module.table_contains(module.Direction, input.direction) then
+    if type(input.direction) == "string" and utils.table_contains(module.Direction, input.direction) then
         yoga_style.direction = input.direction
     end
 
-    if type(input.flexDirection) == "string" and module.table_contains(module.FlexDirection, input.flexDirection) then
+    if type(input.flexDirection) == "string" and utils.table_contains(module.FlexDirection, input.flexDirection) then
         yoga_style.flexDirection = input.flexDirection
     end
 
-    if type(input.justifyContent) == "string" and module.table_contains(module.JustifyContent, input.justifyContent) then
+    if type(input.justifyContent) == "string" and utils.table_contains(module.JustifyContent, input.justifyContent) then
         yoga_style.justifyContent = input.justifyContent
     end
 
-    if type(input.alignContent) == "string" and module.table_contains(module.AlignContent, input.alignContent) then
+    if type(input.alignContent) == "string" and utils.table_contains(module.AlignContent, input.alignContent) then
         yoga_style.alignContent = input.alignContent
     end
 
-    if type(input.alignItems) == "string" and module.table_contains(module.AlignItems, input.alignItems) then
+    if type(input.alignItems) == "string" and utils.table_contains(module.AlignItems, input.alignItems) then
         yoga_style.alignItems = input.alignItems
     end
 
-    if type(input.alignSelf) == "string" and module.table_contains(module.AlignSelf, input.alignSelf) then
+    if type(input.alignSelf) == "string" and utils.table_contains(module.AlignSelf, input.alignSelf) then
         yoga_style.alignSelf = input.alignSelf
     end
 
-    if type(input.positionType) == "string" and module.table_contains(module.PositionType, input.positionType) then
+    if type(input.positionType) == "string" and utils.table_contains(module.PositionType, input.positionType) then
         yoga_style.positionType = input.positionType
     end
 
-    if type(input.flexWrap) == "string" and module.table_contains(module.FlexWrap, input.flexWrap) then
+    if type(input.flexWrap) == "string" and utils.table_contains(module.FlexWrap, input.flexWrap) then
         yoga_style.flexWrap = input.flexWrap
     end
 
-    if type(input.overflow) == "string" and module.table_contains(module.Overflow, input.overflow) then
+    if type(input.overflow) == "string" and utils.table_contains(module.Overflow, input.overflow) then
         yoga_style.overflow = input.overflow
     end
 
-    if type(input.display) == "string" and module.table_contains(module.Display, input.display) then
+    if type(input.display) == "string" and utils.table_contains(module.Display, input.display) then
         yoga_style.display = input.display
     end
 
