@@ -631,11 +631,15 @@ function module.NodeStyleDef(input)
     local node_style_def = {}
 
     if type(input.layout) == "table" then
-        node_style_def.layout = input.layout
+        for k, v in pairs(input.layout) do
+            node_style_def[k] = v
+        end
     end
 
     if type(input.base_draw) == "table" then
-        node_style_def.base_draw = input.base_draw
+        for k, v in pairs(input.base_draw) do
+            node_style_def[k] = v
+        end
     end
 
     return node_style_def
@@ -649,15 +653,21 @@ function module.WidgetStyleDef(input)
     local widget_style_def = {}
 
     if type(input.style_rules) == "table" then
-        widget_style_def.style_rules = input.style_rules
+        for k, v in pairs(input.style_rules) do
+            widget_style_def[k] = v
+        end
     end
 
     if type(input.layout) == "table" then
-        widget_style_def.layout = input.layout
+        for k, v in pairs(input.layout) do
+            widget_style_def[k] = v
+        end
     end
 
     if type(input.base_draw) == "table" then
-        widget_style_def.base_draw = input.base_draw
+        for k, v in pairs(input.base_draw) do
+            widget_style_def[k] = v
+        end
     end
 
     return widget_style_def

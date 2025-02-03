@@ -46,6 +46,15 @@ module.button_style = theme.WidgetStyle({
     style = theme.WidgetStyleDef({
         style_rules = theme.StyleRules({
             font = theme.FontDef("roboto-regular", 32)
+        }),
+        layout = theme.YogaStyle({
+            width = "50%",
+            padding = {
+                [theme.Edge.Vertical] = 10 
+            },
+            margin = {
+                [theme.Edge.Left] = 140 
+            }
         })
     })
 })
