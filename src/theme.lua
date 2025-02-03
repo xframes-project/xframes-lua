@@ -1,3 +1,6 @@
+local bit = require("bit")
+local array = require("array")
+
 local module = {}
 
 module.ImGuiCol = {
@@ -65,7 +68,7 @@ module.ImPlotScale = {
 }
 
 module.ImPlotMarker = {
-    None_ = -1,
+    None = -1,
     Circle = 0,
     Square = 1,
     Diamond = 2,
@@ -114,7 +117,7 @@ module.ImGuiStyleVar = {
 }
 
 module.ImGuiDir = {
-    None_ = -1,
+    None = -1,
     Left = 0,
     Right = 1,
     Up = 2,
@@ -122,28 +125,28 @@ module.ImGuiDir = {
 }
 
 module.ImGuiHoveredFlags = {
-    None_ = 0,  -- "None" is a reserved keyword in Python
-    ChildWindows = 1 << 0,
-    RootWindow = 1 << 1,
-    AnyWindow = 1 << 2,
-    NoPopupHierarchy = 1 << 3,
-    -- DockHierarchy = 1 << 4,
-    AllowWhenBlockedByPopup = 1 << 5,
-    -- AllowWhenBlockedByModal = 1 << 6,
-    AllowWhenBlockedByActiveItem = 1 << 7,
-    AllowWhenOverlappedByItem = 1 << 8,
-    AllowWhenOverlappedByWindow = 1 << 9,
-    AllowWhenDisabled = 1 << 10,
-    NoNavOverride = 1 << 11,
-    AllowWhenOverlapped = (1 << 8) | (1 << 9),  -- AllowWhenOverlappedByItem | AllowWhenOverlappedByWindow
-    RectOnly = (1 << 5) | (1 << 7) | (1 << 8),  -- AllowWhenBlockedByPopup | AllowWhenBlockedByActiveItem | AllowWhenOverlapped
-    RootAndChildWindows = (1 << 1) | (1 << 0),  -- RootWindow | ChildWindows
-    ForTooltip = 1 << 12,
-    Stationary = 1 << 13,
-    DelayNone = 1 << 14,
-    DelayShort = 1 << 15,
-    DelayNormal = 1 << 16,
-    NoSharedDelay = 1 << 17
+    None = 0,
+    ChildWindows = bit.lshift(1, 0),
+    RootWindow = bit.lshift(1, 1),
+    AnyWindow = bit.lshift(1, 2),
+    NoPopupHierarchy = bit.lshift(1, 3),
+    -- DockHierarchy = bit.lshift(1, 4),
+    AllowWhenBlockedByPopup = bit.lshift(1, 5),
+    -- AllowWhenBlockedByModal = bit.lshift(1, 6),
+    AllowWhenBlockedByActiveItem = bit.lshift(1, 7),
+    AllowWhenOverlappedByItem = bit.lshift(1, 8),
+    AllowWhenOverlappedByWindow = bit.lshift(1, 9),
+    AllowWhenDisabled = bit.lshift(1, 10),
+    NoNavOverride = bit.lshift(1, 11),
+    AllowWhenOverlapped = bit.bor(bit.lshift(1, 8), bit.lshift(1, 9)),  -- AllowWhenOverlappedByItem | AllowWhenOverlappedByWindow
+    RectOnly = bit.bor(bit.lshift(1, 5), bit.lshift(1, 7), bit.lshift(1, 8)),  -- AllowWhenBlockedByPopup | AllowWhenBlockedByActiveItem | AllowWhenOverlapped
+    RootAndChildWindows = bit.bor(bit.lshift(1, 1), bit.lshift(1, 0)),  -- RootWindow | ChildWindows
+    ForTooltip = bit.lshift(1, 12),
+    Stationary = bit.lshift(1, 13),
+    DelayNone = bit.lshift(1, 14),
+    DelayShort = bit.lshift(1, 15),
+    DelayNormal = bit.lshift(1, 16),
+    NoSharedDelay = bit.lshift(1, 17)
 }
 
 function module.HEXA(color, opacity)
@@ -234,7 +237,38 @@ function module.is_valid_style_vars(input)
     return is_valid
 end
 
--- this seems a bit overkill
+function module.is_valid_edge_based_values_table(input)
+    if type(input) ~= "table" then
+        return false
+    end
+
+    local is_valid = true
+    for key, value in pairs(input) do
+        if not module.table_contains(module.Edge, key) or type(value) ~= "number" then
+            is_valid = false
+            break
+        end
+    end
+
+    return is_valid
+end
+
+function module.is_valid_gutter_based_values_table(input)
+    if type(input) ~= "table" then
+        return false
+    end
+
+    local is_valid = true
+    for key, value in pairs(input) do
+        if not module.table_contains(module.Gutter, key) or type(value) ~= "number" then
+            is_valid = false
+            break
+        end
+    end
+
+    return is_valid
+end
+
 function module.is_valid_font_def(input)
     if type(input) ~= "table" then
         return false
@@ -247,6 +281,31 @@ function module.is_valid_font_def(input)
     end
 
     return true
+end
+
+function module.is_valid_border_style(input)
+    if type(input) ~= "table" then
+        return false
+    end
+    if type(input.color) ~= "string" then
+        return false
+    end
+
+    if type(input.thickness) ~= "nil" and type(input.thickness) ~= "number" then
+        return false
+    end
+
+    return true
+end
+
+function module.is_valid_round_corners(input)
+    if type(input) ~= "table" then
+        return false
+    end
+    
+    return array.every(input.roundCorners, function(value)
+        return module.table_contains(module.RoundCorners, value)
+    end)
 end
 
 function module.is_valid_color_value(input)
@@ -415,7 +474,109 @@ function module.YogaStyle(input)
 
     local yoga_style = {}
 
-    
+    if type(input.direction) == "string" and module.table_contains(module.Direction, input.direction) then
+        yoga_style.direction = input.direction
+    end
+
+    if type(input.flexDirection) == "string" and module.table_contains(module.FlexDirection, input.flexDirection) then
+        yoga_style.flexDirection = input.flexDirection
+    end
+
+    if type(input.justifyContent) == "string" and module.table_contains(module.JustifyContent, input.justifyContent) then
+        yoga_style.justifyContent = input.justifyContent
+    end
+
+    if type(input.alignContent) == "string" and module.table_contains(module.AlignContent, input.alignContent) then
+        yoga_style.alignContent = input.alignContent
+    end
+
+    if type(input.alignItems) == "string" and module.table_contains(module.AlignItems, input.alignItems) then
+        yoga_style.alignItems = input.alignItems
+    end
+
+    if type(input.alignSelf) == "string" and module.table_contains(module.AlignSelf, input.alignSelf) then
+        yoga_style.alignSelf = input.alignSelf
+    end
+
+    if type(input.positionType) == "string" and module.table_contains(module.PositionType, input.positionType) then
+        yoga_style.positionType = input.positionType
+    end
+
+    if type(input.flexWrap) == "string" and module.table_contains(module.FlexWrap, input.flexWrap) then
+        yoga_style.flexWrap = input.flexWrap
+    end
+
+    if type(input.overflow) == "string" and module.table_contains(module.Overflow, input.overflow) then
+        yoga_style.overflow = input.overflow
+    end
+
+    if type(input.display) == "string" and module.table_contains(module.Display, input.display) then
+        yoga_style.display = input.display
+    end
+
+    if type(input.flex) == "number" then
+        yoga_style.flex = input.flex
+    end
+
+    if type(input.flexGrow) == "number" then
+        yoga_style.flexGrow = input.flexGrow
+    end
+
+    if type(input.flexShrink) == "number" then
+        yoga_style.flexShrink = input.flexShrink
+    end
+
+    if type(input.flexBasis) == "number" then
+        yoga_style.flexBasis = input.flexBasis
+    end
+
+    if type(input.flexBasisPercent) == "number" then
+        yoga_style.flexBasisPercent = input.flexBasisPercent
+    end
+
+    if module.is_valid_edge_based_values_table(input.position) then
+        yoga_style.position = input.position
+    end
+
+    if module.is_valid_edge_based_values_table(input.margin) then
+        yoga_style.margin = input.margin
+    end
+
+    if module.is_valid_edge_based_values_table(input.padding) then
+        yoga_style.padding = input.padding
+    end
+
+    if module.is_valid_gutter_based_values_table(input.gap) then
+        yoga_style.gap = input.gap
+    end
+
+    if type(input.aspectRatio) == "number" then
+        yoga_style.aspectRatio = input.aspectRatio
+    end
+
+    if type(input.width) == "number" or type(input.width) == "string" then
+        yoga_style.width = input.width
+    end
+
+    if type(input.minWidth) == "number" or type(input.minWidth) == "string" then
+        yoga_style.minWidth = input.minWidth
+    end
+
+    if type(input.maxWidth) == "number" or type(input.maxWidth) == "string" then
+        yoga_style.maxWidth = input.maxWidth
+    end
+
+    if type(input.height) == "number" or type(input.height) == "string" then
+        yoga_style.height = input.height
+    end
+
+    if type(input.minHeight) == "number" or type(input.minHeight) == "string" then
+        yoga_style.minHeight = input.minHeight
+    end
+
+    if type(input.maxHeight) == "number" or type(input.maxHeight) == "string" then
+        yoga_style.maxHeight = input.maxHeight
+    end
 
     return yoga_style
 end
@@ -427,7 +588,37 @@ function module.BaseDrawStyle(input)
 
     local base_draw_style = {}
 
+    if type(input.backgroundColor) == "number" or type(input.backgroundColor) == "string" then
+        base_draw_style.backgroundColor = input.backgroundColor
+    end
+
+    if module.is_valid_border_style(input.border) then
+        base_draw_style.border = input.border
+    end
+
+    if module.is_valid_border_style(input.borderTop) then
+        base_draw_style.borderTop = input.borderTop
+    end
+
+    if module.is_valid_border_style(input.borderRight) then
+        base_draw_style.borderRight = input.borderRight
+    end
+
+    if module.is_valid_border_style(input.borderBottom) then
+        base_draw_style.borderBottom = input.borderBottom
+    end
+
+    if module.is_valid_border_style(input.borderLeft) then
+        base_draw_style.borderLeft = input.borderLeft
+    end
     
+    if type(input.rounding) == "number" then
+        base_draw_style.rounding = input.rounding
+    end
+    
+    if module.is_valid_round_corners(input.roundCorners) then
+        base_draw_style.roundCorners = input.roundCorners
+    end
 
     return base_draw_style
 end
@@ -439,7 +630,13 @@ function module.NodeStyleDef(input)
 
     local node_style_def = {}
 
-    
+    if type(input.layout) == "table" then
+        node_style_def.layout = input.layout
+    end
+
+    if type(input.base_draw) == "table" then
+        node_style_def.base_draw = input.base_draw
+    end
 
     return node_style_def
 end
@@ -451,7 +648,17 @@ function module.WidgetStyleDef(input)
 
     local widget_style_def = {}
 
-    
+    if type(input.style_rules) == "table" then
+        widget_style_def.style_rules = input.style_rules
+    end
+
+    if type(input.layout) == "table" then
+        widget_style_def.layout = input.layout
+    end
+
+    if type(input.base_draw) == "table" then
+        widget_style_def.base_draw = input.base_draw
+    end
 
     return widget_style_def
 end
@@ -463,7 +670,21 @@ function module.NodeStyle(input)
 
     local node_style = {}
 
-    
+    if type(input.style) == "table" then
+        node_style.style = input.style
+    end
+
+    if type(input.hoverStyle) == "table" then
+        node_style.hoverStyle = input.hoverStyle
+    end
+
+    if type(input.activeStyle) == "table" then
+        node_style.activeStyle = input.activeStyle
+    end
+
+    if type(input.disabledStyle) == "table" then
+        node_style.disabledStyle = input.disabledStyle
+    end
 
     return node_style
 end
@@ -475,6 +696,21 @@ function module.WidgetStyle(input)
 
     local widget_style = {}
 
+    if type(input.style) == "table" then
+        widget_style.style = input.style
+    end
+
+    if type(input.hoverStyle) == "table" then
+        widget_style.hoverStyle = input.hoverStyle
+    end
+
+    if type(input.activeStyle) == "table" then
+        widget_style.activeStyle = input.activeStyle
+    end
+
+    if type(input.disabledStyle) == "table" then
+        widget_style.disabledStyle = input.disabledStyle
+    end
     
 
     return widget_style

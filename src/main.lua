@@ -5,6 +5,11 @@ local BehaviorSubject = require("behaviorsubject")
 
 local theme = require("theme")
 
+local sampleapp = require("sampleapp")
+local utils = require("utils")
+
+print(utils.table_to_string(sampleapp.button_style))
+
 local fontDefs = {
     defs = {}
 }

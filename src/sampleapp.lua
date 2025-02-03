@@ -1,5 +1,9 @@
 local array = require("array")
 local BehaviorSubject = require("behaviorsubject")
+local theme = require("theme")
+local utils = require("utils")
+
+local module = {}
 
 local function make_todo_item(text, done)
     local todo_item = {
@@ -29,3 +33,21 @@ local function on_click()
 
     app_state:onNext(new_state)
 end
+
+module.text_style = theme.WidgetStyle({
+    style = theme.WidgetStyleDef({
+        style_rules = theme.StyleRules({
+            font = theme.FontDef("roboto-regular", 32)
+        })
+    })
+})
+
+module.button_style = theme.WidgetStyle({
+    style = theme.WidgetStyleDef({
+        style_rules = theme.StyleRules({
+            font = theme.FontDef("roboto-regular", 32)
+        })
+    })
+})
+
+return module
