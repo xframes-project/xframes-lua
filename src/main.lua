@@ -7,25 +7,22 @@ local utils = require("utils")
 local WidgetRegistrationservice = require("services")
 local xframes = require("xframes")
 
-print(utils.table_to_string(sampleapp.button_style))
+-- print(utils.table_to_string(sampleapp.button_style))
 
 local fontDefs = {
     defs = {}
 }
 
--- Original list of font names and sizes
 local fontData = {
     { name = "roboto-regular", sizes = {16, 18, 20, 24, 28, 32, 36, 48} }
 }
 
--- Convert and flatten the data
 for _, entry in ipairs(fontData) do
     local name = entry.name
     for _, size in ipairs(entry.sizes) do
         table.insert(fontDefs.defs, { name = name, size = size })
     end
 end
-
 
 local fontDefsJson = dkjson.encode(fontDefs)
 
