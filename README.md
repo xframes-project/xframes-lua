@@ -8,11 +8,9 @@
 
 #### Windows
 
-You may want to use [scoop](https://scoop.sh/):
+You may want to use [winget](https://learn.microsoft.com/en-us/windows/package-manager/winget/)
 
-- `scoop install lua`
-- `scoop install luarocks`
-- `scoop install luajit`
+`winget install luajit`
 
 ### Set LUA_PATH
 
@@ -28,9 +26,15 @@ The `luajit2` and `luarocks` packages should be available on Ubuntu.
 
 - `luarocks install dkjson`
 - `luarocks install array`
-- `luarocks install luv`
+- `luarocks install luv` (read below if you are on Windows)
 
-On Linux you may need to run these as `sudo`.
+#### Linux
+
+You likely need to run these as `sudo`.
+
+#### Windows
+
+Installing `luv` requires a x64 VS 2022 developer prompt.
 
 ## Screenshots
 
@@ -41,5 +45,3 @@ Windows 11
 Raspberry Pi 5
 
 ![image](https://github.com/user-attachments/assets/8dfc3a12-b550-46dd-bc20-90f856cb46c8)
-
-
