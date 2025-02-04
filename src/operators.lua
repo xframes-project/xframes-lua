@@ -46,28 +46,54 @@ function module.debounce(delay)
     return function(subject)
         local newSubject = createSubject(subject)
         local timer = nil
-        
+
         subject:subscribe(
             function(value)
                 if timer then
-                    timer:cancel()
+                    timer:stop()
+                else
+                    timer = luv.new_timer()
                 end
-                timer = luv.timer.new()
                 timer:start(delay, 0, function()
                     newSubject:onNext(value)
-                    timer:close()
+                    luv.defer(function() timer:close() end)
                     timer = nil
                 end)
             end,
             function(err) newSubject:error(err) end,
-            function() 
+            function()
                 if timer then
-                    timer:cancel()
+                    timer:stop()
+                    luv.defer(function() timer:close() end)
                 end
-                newSubject:onCompleted() 
+                newSubject:onCompleted()
             end
         )
-        
+
+        return newSubject
+    end
+end
+
+---Inspired by https://reactivex.io/documentation/operators/skip.html
+---@param count number
+---@return function
+function module.skip(count)
+    return function(subject)
+        local newSubject = createSubject(subject)
+        local skipped = 0
+
+        subject:subscribe(
+            function(value)
+                if skipped < count then
+                    skipped = skipped + 1
+                else
+                    newSubject:onNext(value)
+                end
+            end,
+            function(err) newSubject:onError(err) end,
+            function() newSubject:onCompleted() end
+        )
+
         return newSubject
     end
 end

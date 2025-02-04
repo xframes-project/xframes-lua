@@ -4,16 +4,17 @@ local utils = require("utils")
 
 local module = {}
 
-module.BaseComponent = {}
-module.BaseComponent.__index = module.BaseComponent
+module.Component = {}
+module.Component.__index = module.Component
 
-function module.BaseComponent.new(props)
-    local obj = setmetatable({}, module.BaseComponent)
+function module.Component.new(props)
+    local obj = setmetatable({}, module.Component)
     obj.props = BehaviorSubject.new(props)
+    obj.__type = "Component"
     return obj
 end
 
-function module.BaseComponent:render()
+function module.Component:render()
     error("render() must be implemented in subclass!")
 end
 
@@ -31,21 +32,38 @@ function module.WidgetNode(widgetType, props, children)
     end
 
     return {
+        __type = "WidgetNode",
         type = type,
         props = BehaviorSubject.new(props),
         children = BehaviorSubject.new(children)
     }
 end
 
-function module.widget_node_factory(widgetType, props, children)
-    local node = {
+function module.RawChildlessWidgetNodeWithId(id, widgetType, props)
+    return {
+        id = id,
         type = widgetType,
-        props = props or {},
-        children = children or {}
+        props = props or {}
     }
-
-    return node
 end
+
+function module.create_raw_childless_widget_node_with_id(id, node)
+    return module.RawChildlessWidgetNodeWithId({
+        id = id,
+        type = node.type,
+        props = node.props:get()
+    })
+end
+
+-- function module.widget_node_factory(widgetType, props, children)
+--     local node = {
+--         type = widgetType,
+--         props = props or {},
+--         children = children or {}
+--     }
+
+--     return node
+-- end
 
 local function init_props_with_style(style)
     local props = {}
@@ -71,15 +89,35 @@ end
 function module.root_node(children, style)
     local props = init_props_with_style(style)
     props["root"] = true
-    
-    return module.widget_node_factory(WidgetTypes.Node, props, children)
+
+    return module.WidgetNode(WidgetTypes.Node, props, children)
 end
 
 function module.node(children, style)
     local props = init_props_with_style(style)
     props["root"] = false
-    
-    return module.widget_node_factory(WidgetTypes.Node, props, children)
+
+    return module.WidgetNode(WidgetTypes.Node, props, children)
+end
+
+function module.unformatted_text(text, style)
+    local props = init_props_with_style(style)
+
+    props["text"] = text
+
+    return module.WidgetNode(WidgetTypes.UnformattedText, {})
+end
+
+function module.button(label, on_click, style)
+    local props = init_props_with_style(style)
+
+    props["label"] = label
+
+    if type(on_click) == "function" then
+        props["on_click"] = on_click
+    end
+
+    return module.WidgetNode(WidgetTypes.UnformattedText, {})
 end
 
 return module
