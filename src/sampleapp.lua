@@ -23,7 +23,10 @@ local function make_app_state(todo_text, todo_items)
 end
 
 
-local app_state = BehaviorSubject.new(make_app_state("", {}))
+local app_state = BehaviorSubject.new(make_app_state("", {
+    make_todo_item("todo 1", false),
+    make_todo_item("todo 2", false)
+}))
 
 local function on_click()
     local new_todo_item = make_todo_item("New Todo", false)

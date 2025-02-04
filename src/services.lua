@@ -1,13 +1,14 @@
 local dkjson = require("dkjson")
 local ReplaySubject = require("replaysubject")
 local operators = require("operators")
-local xframes = require("xframes")
+local utils = require("utils")
 
 local WidgetRegistrationService = {}
 WidgetRegistrationService.__index = WidgetRegistrationService
 
-function WidgetRegistrationService.new()
+function WidgetRegistrationService.new(xframes)
     local obj = setmetatable({}, WidgetRegistrationService)
+    obj.xframes = xframes
     obj.events_subject = ReplaySubject.new(10)
 
     local debounced = obj.events_subject:pipe(operators.debounce(1))
@@ -58,8 +59,19 @@ function WidgetRegistrationService:dispatch_on_click_event(widget_id)
 end
 
 function WidgetRegistrationService:create_widget(widget)
-    print("creating widget")
-    local widget_json = dkjson.encode(widget:to_serializable_dict())
+    local filtered_widget = {
+        id = widget.id,
+        type = widget.type
+    }
+
+    for key, value in pairs(widget.props) do
+        if type(value) ~= "function" then
+            filtered_widget[key] = value
+        end
+    end
+
+    local widget_json = dkjson.encode(filtered_widget)
+
     self:set_element(widget_json)
 end
 
@@ -112,7 +124,8 @@ function WidgetRegistrationService:set_combo_selected_index(widget_id, index)
 end
 
 function WidgetRegistrationService:set_element(json_data)
-    xframes.setElement(json_data)
+    print(debug.traceback())
+    self.xframes.setElement(json_data)
 end
 
 function WidgetRegistrationService:patch_element(widget_id, json_data)
@@ -120,7 +133,7 @@ function WidgetRegistrationService:patch_element(widget_id, json_data)
 end
 
 function WidgetRegistrationService:set_children(widget_id, json_data)
-    xframes.setChildren(widget_id, json_data)
+    self.xframes.setChildren(widget_id, json_data)
 end
 
 function WidgetRegistrationService:element_internal_op(widget_id, json_data)

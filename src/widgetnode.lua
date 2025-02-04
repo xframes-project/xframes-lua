@@ -48,11 +48,11 @@ function module.RawChildlessWidgetNodeWithId(id, widgetType, props)
 end
 
 function module.create_raw_childless_widget_node_with_id(id, node)
-    return module.RawChildlessWidgetNodeWithId({
-        id = id,
-        type = node.type,
-        props = node.props:get()
-    })
+    return module.RawChildlessWidgetNodeWithId(
+        id,
+        node.type,
+        node.props:getValue()
+    )
 end
 
 -- function module.widget_node_factory(widgetType, props, children)
@@ -105,19 +105,18 @@ function module.unformatted_text(text, style)
 
     props["text"] = text
 
-    return module.WidgetNode(WidgetTypes.UnformattedText, {})
+    return module.WidgetNode(WidgetTypes.UnformattedText, props, {})
 end
 
 function module.button(label, on_click, style)
     local props = init_props_with_style(style)
-
     props["label"] = label
 
     if type(on_click) == "function" then
         props["on_click"] = on_click
     end
 
-    return module.WidgetNode(WidgetTypes.UnformattedText, {})
+    return module.WidgetNode(WidgetTypes.Button, props, {})
 end
 
 return module

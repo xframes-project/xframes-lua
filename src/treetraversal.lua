@@ -60,9 +60,10 @@ function ShadowNodeTraversalHelper:subscribe_to_props_helper(shadow_node)
             self:handle_component_props_change(shadow_node, renderable, new_props)
         end)
     elseif renderable.__type == "WidgetNode" then
-        shadow_node.props_change_subscription = renderable.props:pipe(ops.skip(1)):subscribe(function(new_props)
-            self:handle_widget_node_props_change(shadow_node, renderable, new_props)
-        end)
+        print(renderable.type)
+        -- shadow_node.props_change_subscription = renderable.props:pipe(ops.skip(1)):subscribe(function(new_props)
+        --     self:handle_widget_node_props_change(shadow_node, renderable, new_props)
+        -- end)
     end
 end
 
@@ -97,7 +98,7 @@ function ShadowNodeTraversalHelper:handle_widget_node_props_change(shadow_node, 
         widgetnode.create_raw_childless_widget_node_with_id(shadow_node.id, widget_node)
     )
 
-    local shadow_children = array.map(widget_node.children, function(child)
+    local shadow_children = array.map(widget_node.children:getValue(), function(child)
         return self:traverse_tree(child)
     end)
 
@@ -109,27 +110,22 @@ function ShadowNodeTraversalHelper:handle_widget_node_props_change(shadow_node, 
 end
 
 function ShadowNodeTraversalHelper:traverse_tree(renderable)
-    -- print("eh beh")
-    print(utils.table_to_string(renderable))
+    if type(renderable) == "nil" then
+        print("Received renderable is nil")
+        error("Received renderable is nil")
+    end
+
     if renderable.__type == "Component" then
-        print("a")
         local shadow_child = self:traverse_tree(renderable:render())
-        print("b")
         local id = self.widget_registration_service:get_next_component_id()
-        print("c")
         local shadow_node = ShadowNode(id, renderable)
-        print("d")
         shadow_node.children = { shadow_child }
-        print("e")
-        shadow_node.current_props = renderable.props:get()
-        print("f")
+        shadow_node.current_props = renderable.props:getValue()
 
         self:subscribe_to_props_helper(shadow_node)
-        print("g")
 
         return shadow_node
     elseif renderable.__type == "WidgetNode" then
-        print("aa")
         local id = self.widget_registration_service:get_next_widget_id()
         local raw_node = widgetnode.create_raw_childless_widget_node_with_id(id, renderable)
 
@@ -137,10 +133,12 @@ function ShadowNodeTraversalHelper:traverse_tree(renderable)
         self.widget_registration_service:create_widget(raw_node)
 
         local shadow_node = ShadowNode(id, renderable)
-        shadow_node.children = array.map(renderable.children:get(), function(child)
+
+        shadow_node.children = array.map(renderable.children:getValue(), function(child)
             return self:traverse_tree(child)
         end)
-        shadow_node.current_props = renderable.props:get()
+
+        shadow_node.current_props = renderable.props:getValue()
 
         local linkable_children = get_linkable_children(shadow_node)
 

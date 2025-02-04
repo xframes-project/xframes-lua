@@ -3,6 +3,7 @@ BehaviorSubject.__index = BehaviorSubject
 
 function BehaviorSubject.new(initialValue)
     local obj = setmetatable({}, BehaviorSubject)
+    obj.__type = "BehaviorSubject"
     obj.value = initialValue
     obj.observers = {}
     obj.isCompleted = false

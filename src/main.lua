@@ -100,15 +100,17 @@ local theme2 = {
 
 local theme2Json = dkjson.encode(theme2)
 
-local widget_registration_service = WidgetRegistrationservice.new()
+local widget_registration_service = WidgetRegistrationservice.new(xframes)
 local shadow_node_traversal_helper = ShadowNodeTraversalHelper.new(widget_registration_service)
+
+
 
 local function start_app()
     local root = sampleapp.Root.new()
 
-    -- print(utils.table_to_string(root:render()))
+    print(root)
 
-    shadow_node_traversal_helper.traverse_tree(root)
+    shadow_node_traversal_helper:traverse_tree(root)
 end
 
 local function onInit()
@@ -116,27 +118,6 @@ local function onInit()
 
     start_app()
 end
-
--- local function onInit()
---     print("Initialization complete!")
-
---     local rootNode = {
---         id = 0,
---         type = "node",
---         root = true
---     }
-
---     local unformattedText = {
---         id = 1,
---         type = "unformatted-text",
---         text = "Hello, world"
---     }
-
---     xframes.setElement(dkjson.encode(rootNode))
---     xframes.setElement(dkjson.encode(unformattedText))
-
---     xframes.setChildren(0, dkjson.encode({ 1 }))
--- end
 
 local function onTextChanged(text)
     print("Text changed:", ffi.string(text))
