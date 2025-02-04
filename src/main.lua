@@ -164,4 +164,4 @@ xframes.init(
     ffi.cast("OnClickCb", onClick)
 )
 
-io.read()
+local _ = io.read()

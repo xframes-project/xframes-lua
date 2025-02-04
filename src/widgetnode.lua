@@ -1,6 +1,41 @@
 local WidgetTypes = require("widgettypes")
+local BehaviorSubject = require("behaviorsubject")
+local utils = require("utils")
 
 local module = {}
+
+module.BaseComponent = {}
+module.BaseComponent.__index = module.BaseComponent
+
+function module.BaseComponent.new(props)
+    local obj = setmetatable({}, module.BaseComponent)
+    obj.props = BehaviorSubject.new(props)
+    return obj
+end
+
+function module.BaseComponent:render()
+    error("render() must be implemented in subclass!")
+end
+
+function module.WidgetNode(widgetType, props, children)
+    if not utils.table_contains(WidgetTypes, widgetType) then
+        error("Unrecognised widgetType")
+    end
+
+    if type(props) ~= "table" then
+        error("props must be a table")
+    end
+
+    if type(children) ~= "table" then
+        error("children must be a table")
+    end
+
+    return {
+        type = type,
+        props = BehaviorSubject.new(props),
+        children = BehaviorSubject.new(children)
+    }
+end
 
 function module.widget_node_factory(widgetType, props, children)
     local node = {
@@ -12,7 +47,7 @@ function module.widget_node_factory(widgetType, props, children)
     return node
 end
 
-function init_props_with_style(style)
+local function init_props_with_style(style)
     local props = {}
 
     if style then
@@ -37,14 +72,14 @@ function module.root_node(children, style)
     local props = init_props_with_style(style)
     props["root"] = true
     
-    return widget_node_factory(WidgetTypes.Node, props, children)
+    return module.widget_node_factory(WidgetTypes.Node, props, children)
 end
 
 function module.node(children, style)
     local props = init_props_with_style(style)
     props["root"] = false
     
-    return widget_node_factory(WidgetTypes.Node, props, children)
+    return module.widget_node_factory(WidgetTypes.Node, props, children)
 end
 
 return module
