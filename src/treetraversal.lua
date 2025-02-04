@@ -1,6 +1,7 @@
 local array = require("array")
 local widgetnode = require("widgetnode")
 local ops = require("operators")
+local utils = require("utils")
 local WidgetTypes = require("WidgetTypes")
 
 local function ShadowNode(id, renderable)
@@ -38,9 +39,9 @@ local ShadowNodeTraversalHelper = {}
 ShadowNodeTraversalHelper.__index = ShadowNodeTraversalHelper
 
 function ShadowNodeTraversalHelper.new(widget_registration_service)
-    local self = setmetatable({}, ShadowNodeTraversalHelper)
-    self.widget_registration_service = widget_registration_service
-    return self
+    local obj = setmetatable({}, ShadowNodeTraversalHelper)
+    obj.widget_registration_service = widget_registration_service
+    return obj
 end
 
 function ShadowNodeTraversalHelper:are_props_equal(props1, props2)
@@ -108,18 +109,27 @@ function ShadowNodeTraversalHelper:handle_widget_node_props_change(shadow_node, 
 end
 
 function ShadowNodeTraversalHelper:traverse_tree(renderable)
+    -- print("eh beh")
+    print(utils.table_to_string(renderable))
     if renderable.__type == "Component" then
+        print("a")
         local shadow_child = self:traverse_tree(renderable:render())
-
+        print("b")
         local id = self.widget_registration_service:get_next_component_id()
+        print("c")
         local shadow_node = ShadowNode(id, renderable)
+        print("d")
         shadow_node.children = { shadow_child }
+        print("e")
         shadow_node.current_props = renderable.props:get()
+        print("f")
 
         self:subscribe_to_props_helper(shadow_node)
+        print("g")
 
         return shadow_node
     elseif renderable.__type == "WidgetNode" then
+        print("aa")
         local id = self.widget_registration_service:get_next_widget_id()
         local raw_node = widgetnode.create_raw_childless_widget_node_with_id(id, renderable)
 
@@ -143,6 +153,7 @@ function ShadowNodeTraversalHelper:traverse_tree(renderable)
 
         return shadow_node
     else
+        print("Unrecognized renderable")
         error("Unrecognized renderable")
     end
 end

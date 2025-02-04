@@ -99,7 +99,6 @@ function module.Root.new()
     return obj
 end
 
---- Render method to display the UI.
 function module.Root:render()
     return widgetnode.root_node({
         module.App.new()

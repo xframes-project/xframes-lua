@@ -7,18 +7,18 @@ local WidgetRegistrationService = {}
 WidgetRegistrationService.__index = WidgetRegistrationService
 
 function WidgetRegistrationService.new()
-    local self = setmetatable({}, WidgetRegistrationService)
-    self.events_subject = ReplaySubject.new(10)
-    
-    local debounced = self.events_subject:pipe(operators.debounce(1))
+    local obj = setmetatable({}, WidgetRegistrationService)
+    obj.events_subject = ReplaySubject.new(10)
+
+    local debounced = obj.events_subject:pipe(operators.debounce(1))
     debounced:subscribe(function(fn) fn() end)
 
-    self.widget_registry = {}
-    self.on_click_registry = {}
+    obj.widget_registry = {}
+    obj.on_click_registry = {}
 
-    self.last_widget_id = 0
-    self.last_component_id = 0
-    return self
+    obj.last_widget_id = 0
+    obj.last_component_id = 0
+    return obj
 end
 
 function WidgetRegistrationService:get_widget_by_id(widget_id)
@@ -58,6 +58,7 @@ function WidgetRegistrationService:dispatch_on_click_event(widget_id)
 end
 
 function WidgetRegistrationService:create_widget(widget)
+    print("creating widget")
     local widget_json = dkjson.encode(widget:to_serializable_dict())
     self:set_element(widget_json)
 end
@@ -88,12 +89,12 @@ function WidgetRegistrationService:reset_data(widget_id, data)
 end
 
 function WidgetRegistrationService:append_data_to_plot_line(widget_id, x, y)
-    local plot_data = {x = x, y = y}
+    local plot_data = { x = x, y = y }
     self:element_internal_op(widget_id, dkjson.encode(plot_data))
 end
 
 function WidgetRegistrationService:set_plot_line_axes_decimal_digits(widget_id, x, y)
-    local axes_data = {x = x, y = y}
+    local axes_data = { x = x, y = y }
     self:element_internal_op(widget_id, dkjson.encode(axes_data))
 end
 
@@ -106,7 +107,7 @@ function WidgetRegistrationService:set_input_text_value(widget_id, value)
 end
 
 function WidgetRegistrationService:set_combo_selected_index(widget_id, index)
-    local selected_index_data = {index = index}
+    local selected_index_data = { index = index }
     self:element_internal_op(widget_id, dkjson.encode(selected_index_data))
 end
 

@@ -33,7 +33,7 @@ function module.WidgetNode(widgetType, props, children)
 
     return {
         __type = "WidgetNode",
-        type = type,
+        type = widgetType,
         props = BehaviorSubject.new(props),
         children = BehaviorSubject.new(children)
     }

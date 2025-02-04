@@ -2,12 +2,12 @@ local BehaviorSubject = {}
 BehaviorSubject.__index = BehaviorSubject
 
 function BehaviorSubject.new(initialValue)
-    local self = setmetatable({}, BehaviorSubject)
-    self.value = initialValue
-    self.observers = {}
-    self.isCompleted = false
-    self.error = nil
-    return self
+    local obj = setmetatable({}, BehaviorSubject)
+    obj.value = initialValue
+    obj.observers = {}
+    obj.isCompleted = false
+    obj.error = nil
+    return obj
 end
 
 function BehaviorSubject:subscribe(onNext, onError, onCompleted)
@@ -19,14 +19,14 @@ function BehaviorSubject:subscribe(onNext, onError, onCompleted)
         if onError then onError(self.error) end
         return
     end
-    
-    local observer = {onNext = onNext, onError = onError, onCompleted = onCompleted}
+
+    local observer = { onNext = onNext, onError = onError, onCompleted = onCompleted }
     table.insert(self.observers, observer)
-    
+
     if self.value ~= nil then
         onNext(self.value)
     end
-    
+
     return function()
         for i, obs in ipairs(self.observers) do
             if obs == observer then
@@ -73,7 +73,7 @@ function BehaviorSubject:hasObservers()
 end
 
 function BehaviorSubject:pipe(...)
-    local funcs = {...}
+    local funcs = { ... }
     local result = self
     for _, fn in ipairs(funcs) do
         result = fn(result)
