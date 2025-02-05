@@ -9,8 +9,6 @@ local WidgetRegistrationservice = require("services")
 local ShadowNodeTraversalHelper = require("treetraversal")
 local xframes = require("xframes")
 
--- print(utils.table_to_string(sampleapp.button_style))
-
 local fontDefs = {
     defs = {}
 }
@@ -138,17 +136,12 @@ local function onMultipleNumericValuesChanged(values, count)
     end
 end
 
--- Async handler for deferred execution
-local async_handler = luv.new_async(function(widgetId)
-    print("onClick b")
-    print("async operation ran")
+local async_on_click_handler = luv.new_async(function(widgetId)
     widget_registration_service:dispatch_on_click_event(widgetId)
 end)
 
-local function onClick(widgetId)
-    print("onClick a")
-    async_handler:send(widgetId)  -- Schedule async operation
-    print("onClick d")
+local function on_click(widgetId)
+    async_on_click_handler:send(widgetId)
 end
 
 -- Start Luv event loop in the current thread
@@ -166,7 +159,7 @@ xframes.init(
     ffi.cast("OnNumericValueChangedCb", onNumericValueChanged),
     ffi.cast("OnBooleanValueChangedCb", onBooleanValueChanged),
     ffi.cast("OnMultipleNumericValuesChangedCb", onMultipleNumericValuesChanged),
-    ffi.cast("OnClickCb", onClick)
+    ffi.cast("OnClickCb", on_click)
 )
 
 start_event_loop()

@@ -55,16 +55,6 @@ function module.create_raw_childless_widget_node_with_id(id, node)
     )
 end
 
--- function module.widget_node_factory(widgetType, props, children)
---     local node = {
---         type = widgetType,
---         props = props or {},
---         children = children or {}
---     }
-
---     return node
--- end
-
 local function init_props_with_style(style)
     local props = {}
 

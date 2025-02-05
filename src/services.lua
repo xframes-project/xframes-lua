@@ -11,7 +11,7 @@ function WidgetRegistrationService.new()
     obj.events_subject = ReplaySubject.new(10)
 
     obj.events_subject:subscribe(function(fn) 
-        coroutine.wrap(fn)()
+        fn()
     end)
 
     obj.widget_registry = {}
@@ -49,8 +49,6 @@ end
 function WidgetRegistrationService:dispatch_on_click_event(widget_id)
     local on_click = self.on_click_registry[widget_id]
     if self.on_click_registry[widget_id] then
-        print("here!!!")
-
         self.events_subject:onNext(on_click)
     else
         print(string.format("Widget with id %d has no on_click handler", widget_id))
@@ -69,11 +67,7 @@ function WidgetRegistrationService:create_widget(widget)
         end
     end
 
-    print("about to json encode")
-
     local widget_json = dkjson.encode(filtered_widget)
-
-    print(widget_json)
 
     self:set_element(widget_json)
 end
@@ -128,9 +122,7 @@ end
 
 function WidgetRegistrationService:set_element(json_data)
     -- print(debug.traceback())
-    print("Calling xframes.setElement")
     xframes.setElement(json_data)
-    print("Called xframes.setElement")
 end
 
 function WidgetRegistrationService:patch_element(widget_id, json_data)
