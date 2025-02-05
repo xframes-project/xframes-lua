@@ -33,6 +33,18 @@ function module.table_contains(tbl, val)
     return false
 end
 
+function module.tables_are_equal(t1, t2)
+    if t1 == t2 then return true end
+    if type(t1) ~= "table" or type(t2) ~= "table" then return false end
+    for k, v in pairs(t1) do
+        if t2[k] ~= v then return false end
+    end
+    for k, v in pairs(t2) do
+        if t1[k] ~= v then return false end
+    end
+    return true
+end
+
 function module.print_error(error_message)
     print(error_message)
     print("-- Stack trace follows --")

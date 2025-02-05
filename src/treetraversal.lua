@@ -4,6 +4,13 @@ local WidgetTypes = require("widgettypes")
 local utils = require("utils")
 
 local function ShadowNode(id, renderable)
+    if not id or type(id) ~= "number" then
+        utils.print_error("id must be a valid number")
+    end
+    if not renderable or type(renderable) ~= "table" or not renderable.__type then
+        utils.print_error("renderable must be a valid object with __type property")
+    end
+
     return {
         __type = "ShadowNode",
         id = id,
@@ -44,7 +51,7 @@ function ShadowNodeTraversalHelper.new(widget_registration_service)
 end
 
 function ShadowNodeTraversalHelper:are_props_equal(props1, props2)
-    return props1 == props2
+    return utils.tables_are_equal(props1, props2)
 end
 
 function ShadowNodeTraversalHelper:subscribe_to_props_helper(shadow_node)

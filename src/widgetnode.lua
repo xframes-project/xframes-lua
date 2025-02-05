@@ -40,6 +40,13 @@ function module.WidgetNode(widgetType, props, children)
 end
 
 function module.RawChildlessWidgetNodeWithId(id, widgetType, props)
+    if not id or type(id) ~= "number" then
+        error("Expected number for id parameter")
+    end
+    if not widgetType or not utils.table_contains(WidgetTypes, widgetType) then
+        error("Expected valid widgetType parameter")
+    end
+    
     return {
         id = id,
         type = widgetType,
@@ -91,6 +98,10 @@ function module.node(children, style)
 end
 
 function module.unformatted_text(text, style)
+    if type(text) ~= "string" then
+        error("Expected string for text parameter")
+    end
+
     local props = init_props_with_style(style)
 
     props["text"] = text
@@ -99,6 +110,10 @@ function module.unformatted_text(text, style)
 end
 
 function module.button(label, on_click, style)
+    if type(label) ~= "string" then
+        error("Expected string for text parameter")
+    end
+
     local props = init_props_with_style(style)
     props["label"] = label
 
