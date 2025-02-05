@@ -152,10 +152,10 @@ module.ImGuiHoveredFlags = {
 
 function module.HEXA(color, opacity)
     if type(color) ~= "string" then
-        error("Invalid color type. Expected string.")
+        utils.print_error("Invalid color type. Expected string.")
     end
     if type(opacity) ~= "number" or opacity < 0 or opacity > 1 then
-        error("Invalid opacity. Expected a number between 0 and 1.")
+        utils.print_error("Invalid opacity. Expected a number between 0 and 1.")
     end
 
     return {
@@ -165,10 +165,10 @@ end
 
 function module.FontDef(name, size)
     if type(name) ~= "string" then
-        error("Invalid name type. Expected string.")
+        utils.print_error("Invalid name type. Expected string.")
     end
     if type(size) ~= "number" then
-        error("Invalid size. Expected a number.")
+        utils.print_error("Invalid size. Expected a number.")
     end
 
     return {
@@ -179,10 +179,10 @@ end
 
 function module.ImVec2(x, y)
     if type(x) ~= "number" then
-        error("Invalid x. Expected a number.")
+        utils.print_error("Invalid x. Expected a number.")
     end
     if type(y) ~= "number" then
-        error("Invalid y. Expected a number.")
+        utils.print_error("Invalid y. Expected a number.")
     end
 
     return {
@@ -315,7 +315,7 @@ end
 
 function module.StyleRules(input)
     if type(input) ~= "table" then
-        error("Invalid type. Expected table.")
+        utils.print_error("Invalid type. Expected table.")
     end
 
     local style_rules = {}
@@ -441,7 +441,7 @@ module.RoundCorners = {
 
 function module.BorderStyle(color, thickness)
     if not module.is_valid_color_value(color) then
-        error("Invalid color. Expected string or HEXA.")
+        utils.print_error("Invalid color. Expected string or HEXA.")
     end
 
     local border_style = {
@@ -450,7 +450,7 @@ function module.BorderStyle(color, thickness)
     
     if type(thickness) ~= "nil" then
         if type(thickness) ~= "number" then
-            error("Invalid thickness. Expected number.")
+            utils.print_error("Invalid thickness. Expected number.")
         end
 
         border_style.thickness = thickness
@@ -461,7 +461,7 @@ end
 
 function module.YogaStyle(input)
     if type(input) ~= "table" then
-        error("Invalid type. Expected table.")
+        utils.print_error("Invalid type. Expected table.")
     end
 
     local yoga_style = {}
@@ -575,7 +575,7 @@ end
 
 function module.BaseDrawStyle(input)
     if type(input) ~= "table" then
-        error("Invalid type. Expected table.")
+        utils.print_error("Invalid type. Expected table.")
     end
 
     local base_draw_style = {}
@@ -617,7 +617,7 @@ end
 
 function module.NodeStyleDef(input)
     if type(input) ~= "table" then
-        error("Invalid type. Expected table.")
+        utils.print_error("Invalid type. Expected table.")
     end
 
     local node_style_def = {}
@@ -639,7 +639,7 @@ end
 
 function module.WidgetStyleDef(input)
     if type(input) ~= "table" then
-        error("Invalid type. Expected table.")
+        utils.print_error("Invalid type. Expected table.")
     end
 
     local widget_style_def = {}
@@ -667,7 +667,7 @@ end
 
 function module.NodeStyle(input)
     if type(input) ~= "table" then
-        error("Invalid type. Expected table.")
+        utils.print_error("Invalid type. Expected table.")
     end
 
     local node_style = {}
@@ -693,7 +693,7 @@ end
 
 function module.WidgetStyle(input)
     if type(input) ~= "table" then
-        error("Invalid type. Expected table.")
+        utils.print_error("Invalid type. Expected table.")
     end
 
     local widget_style = {}

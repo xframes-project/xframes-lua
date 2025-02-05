@@ -33,4 +33,10 @@ function module.table_contains(tbl, val)
     return false
 end
 
+function module.print_error(error_message)
+    print(error_message)
+    print("-- Stack trace follows --")
+    debug.traceback()
+end
+
 return module

@@ -1,9 +1,7 @@
-local Rx = require("rx")
 local array = require("array")
-local luv = require("luv")
 local widgetnode = require("widgetnode")
+local WidgetTypes = require("widgettypes")
 local utils = require("utils")
-local WidgetTypes = require("WidgetTypes")
 
 local function ShadowNode(id, renderable)
     return {
@@ -112,8 +110,7 @@ end
 
 function ShadowNodeTraversalHelper:traverse_tree(renderable)
     if type(renderable) == "nil" then
-        print("Received renderable is nil")
-        error("Received renderable is nil")
+        utils.print_error("Received renderable is nil")
     end
 
     if renderable.__type == "Component" then
@@ -152,8 +149,7 @@ function ShadowNodeTraversalHelper:traverse_tree(renderable)
 
         return shadow_node
     else
-        print("Unrecognized renderable")
-        error("Unrecognized renderable")
+        utils.print_error("Unrecognized renderable")
     end
 end
 

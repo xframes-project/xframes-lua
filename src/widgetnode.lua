@@ -15,20 +15,20 @@ function module.Component.new(props)
 end
 
 function module.Component:render()
-    error("render() must be implemented in subclass!")
+    utils.print_error("render() must be implemented in subclass!")
 end
 
 function module.WidgetNode(widgetType, props, children)
     if not utils.table_contains(WidgetTypes, widgetType) then
-        error("Unrecognised widgetType")
+        utils.print_error("Unrecognised widgetType")
     end
 
     if type(props) ~= "table" then
-        error("props must be a table")
+        utils.print_error("props must be a table")
     end
 
     if type(children) ~= "table" then
-        error("children must be a table")
+        utils.print_error("children must be a table")
     end
 
     return {
