@@ -29,11 +29,19 @@ local app_state = BehaviorSubject.new(make_app_state("", {
 }))
 
 local function on_click()
+    print("on_click a")
     local new_todo_item = make_todo_item("New Todo", false)
+    print("on_click b")
     local current_state = app_state:getValue()
+    print("on_click c")
     local new_state = make_app_state(current_state.todo_text, array.concat(current_state.todo_items, { new_todo_item }))
+    print("on_click d")
+    
+    coroutine.wrap(function ()
+        app_state:onNext(new_state)
+    end)()
 
-    app_state:onNext(new_state)
+    print("on_click e")
 end
 
 local text_style = theme.WidgetStyle({
@@ -67,6 +75,10 @@ module.App.__index = module.App
 function module.App.new()
     local obj = setmetatable(widgetnode.Component.new(), module.App)
     obj.app_state_subscription = app_state:subscribe(function(latest_app_state)
+        -- print("processing app_state change")
+        -- print(utils.table_to_string(latest_app_state))
+        -- print(utils.table_to_string(obj.props))
+
         obj.props:onNext({
             todo_text = latest_app_state.todo_text,
             todo_items = latest_app_state.todo_items,

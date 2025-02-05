@@ -5,12 +5,12 @@ ffi.cdef[[
     void setChildren(int id, const char* childrenIds);
 
     typedef void (*OnInitCb)();
-    typedef void (*OnTextChangedCb)(const char* text);
-    typedef void (*OnComboChangedCb)(int index);
-    typedef void (*OnNumericValueChangedCb)(double value);
-    typedef void (*OnBooleanValueChangedCb)(int value); // 0 or 1 for false/true
-    typedef void (*OnMultipleNumericValuesChangedCb)(double* values, int count);
-    typedef void (*OnClickCb)();
+    typedef void (*OnTextChangedCb)(int id, const char* text);
+    typedef void (*OnComboChangedCb)(int id, int index);
+    typedef void (*OnNumericValueChangedCb)(int id, double value);
+    typedef void (*OnBooleanValueChangedCb)(int id, int value); // 0 or 1 for false/true
+    typedef void (*OnMultipleNumericValuesChangedCb)(int id, double* values, int count);
+    typedef void (*OnClickCb)(int id);
 
     void init(
         const char* assetsBasePath,

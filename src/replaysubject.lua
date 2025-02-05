@@ -51,7 +51,7 @@ function ReplaySubject:onNext(value)
     end
 end
 
-function ReplaySubject:error(err)
+function ReplaySubject:onError(err)
     if self.isCompleted or self.error then return end
     self.error = err
     for _, observer in ipairs(self.observers) do
@@ -59,7 +59,7 @@ function ReplaySubject:error(err)
     end
 end
 
-function ReplaySubject:complete()
+function ReplaySubject:onCompleted()
     if self.isCompleted or self.error then return end
     self.isCompleted = true
     for _, observer in ipairs(self.observers) do

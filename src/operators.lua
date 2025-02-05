@@ -19,7 +19,7 @@ function module.map(transform)
             function(value)
                 newSubject:onNext(transform(value))
             end,
-            function(err) newSubject:error(err) end,
+            function(err) newSubject:onError(err) end,
             function() newSubject:onCompleted() end
         )
         return newSubject
@@ -35,7 +35,7 @@ function module.filter(predicate)
                     newSubject:onNext(value)
                 end
             end,
-            function(err) newSubject:error(err) end,
+            function(err) newSubject:onError(err) end,
             function() newSubject:onCompleted() end
         )
         return newSubject
@@ -51,6 +51,7 @@ function module.debounce(delay)
             function(value)
                 if timer then
                     timer:stop()
+                    timer:close()
                 else
                     timer = luv.new_timer()
                 end
@@ -60,11 +61,12 @@ function module.debounce(delay)
                     timer = nil
                 end)
             end,
-            function(err) newSubject:error(err) end,
+            function(err) newSubject:onError(err) end,
             function()
                 if timer then
                     timer:stop()
-                    luv.defer(function() timer:close() end)
+                    timer:close()
+                    -- luv.defer(function() timer:close() end)
                 end
                 newSubject:onCompleted()
             end

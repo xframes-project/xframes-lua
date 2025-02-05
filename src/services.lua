@@ -1,18 +1,18 @@
 local dkjson = require("dkjson")
 local ReplaySubject = require("replaysubject")
-local operators = require("operators")
 local utils = require("utils")
+local xframes = require("xframes")
 
 local WidgetRegistrationService = {}
 WidgetRegistrationService.__index = WidgetRegistrationService
 
-function WidgetRegistrationService.new(xframes)
+function WidgetRegistrationService.new()
     local obj = setmetatable({}, WidgetRegistrationService)
-    obj.xframes = xframes
     obj.events_subject = ReplaySubject.new(10)
 
-    local debounced = obj.events_subject:pipe(operators.debounce(1))
-    debounced:subscribe(function(fn) fn() end)
+    obj.events_subject:subscribe(function(fn) 
+        coroutine.wrap(fn)()
+    end)
 
     obj.widget_registry = {}
     obj.on_click_registry = {}
@@ -47,11 +47,10 @@ function WidgetRegistrationService:register_on_click(widget_id, on_click)
 end
 
 function WidgetRegistrationService:dispatch_on_click_event(widget_id)
-    if not self.widget_registry[widget_id] then
-        error(string.format("Widget with id %d does not exist", widget_id))
-    end
     local on_click = self.on_click_registry[widget_id]
     if self.on_click_registry[widget_id] then
+        print("here!!!")
+
         self.events_subject:onNext(on_click)
     else
         print(string.format("Widget with id %d has no on_click handler", widget_id))
@@ -70,7 +69,11 @@ function WidgetRegistrationService:create_widget(widget)
         end
     end
 
+    print("about to json encode")
+
     local widget_json = dkjson.encode(filtered_widget)
+
+    print(widget_json)
 
     self:set_element(widget_json)
 end
@@ -124,8 +127,10 @@ function WidgetRegistrationService:set_combo_selected_index(widget_id, index)
 end
 
 function WidgetRegistrationService:set_element(json_data)
-    print(debug.traceback())
-    self.xframes.setElement(json_data)
+    -- print(debug.traceback())
+    print("Calling xframes.setElement")
+    xframes.setElement(json_data)
+    print("Called xframes.setElement")
 end
 
 function WidgetRegistrationService:patch_element(widget_id, json_data)
@@ -133,7 +138,7 @@ function WidgetRegistrationService:patch_element(widget_id, json_data)
 end
 
 function WidgetRegistrationService:set_children(widget_id, json_data)
-    self.xframes.setChildren(widget_id, json_data)
+    xframes.setChildren(widget_id, json_data)
 end
 
 function WidgetRegistrationService:element_internal_op(widget_id, json_data)

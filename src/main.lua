@@ -1,3 +1,4 @@
+local luv = require("luv")
 local ffi = require("ffi")
 local dkjson = require("dkjson")
 
@@ -100,16 +101,12 @@ local theme2 = {
 
 local theme2Json = dkjson.encode(theme2)
 
-local widget_registration_service = WidgetRegistrationservice.new(xframes)
+local widget_registration_service = WidgetRegistrationservice.new()
 local shadow_node_traversal_helper = ShadowNodeTraversalHelper.new(widget_registration_service)
 
-
+local root = sampleapp.Root.new()
 
 local function start_app()
-    local root = sampleapp.Root.new()
-
-    print(root)
-
     shadow_node_traversal_helper:traverse_tree(root)
 end
 
@@ -141,8 +138,22 @@ local function onMultipleNumericValuesChanged(values, count)
     end
 end
 
-local function onClick()
-    print("Button clicked!")
+-- Async handler for deferred execution
+local async_handler = luv.new_async(function(widgetId)
+    print("onClick b")
+    print("async operation ran")
+    widget_registration_service:dispatch_on_click_event(widgetId)
+end)
+
+local function onClick(widgetId)
+    print("onClick a")
+    async_handler:send(widgetId)  -- Schedule async operation
+    print("onClick d")
+end
+
+-- Start Luv event loop in the current thread
+local function start_event_loop()
+    luv.run()
 end
 
 xframes.init(
@@ -158,4 +169,8 @@ xframes.init(
     ffi.cast("OnClickCb", onClick)
 )
 
-local _ = io.read()
+start_event_loop()
+
+while true do
+    -- luv.idle()
+end
