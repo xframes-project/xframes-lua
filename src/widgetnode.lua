@@ -1,5 +1,5 @@
+local Rx = require("rx")
 local WidgetTypes = require("widgettypes")
-local BehaviorSubject = require("behaviorsubject")
 local utils = require("utils")
 
 local module = {}
@@ -9,7 +9,7 @@ module.Component.__index = module.Component
 
 function module.Component.new(props)
     local obj = setmetatable({}, module.Component)
-    obj.props = BehaviorSubject.new(props)
+    obj.props = Rx.BehaviorSubject.create(props)
     obj.__type = "Component"
     return obj
 end
@@ -34,8 +34,8 @@ function module.WidgetNode(widgetType, props, children)
     return {
         __type = "WidgetNode",
         type = widgetType,
-        props = BehaviorSubject.new(props),
-        children = BehaviorSubject.new(children)
+        props = Rx.BehaviorSubject.create(props),
+        children = Rx.BehaviorSubject.create(children)
     }
 end
 

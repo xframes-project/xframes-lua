@@ -1,5 +1,5 @@
+local Rx = require("rx")
 local dkjson = require("dkjson")
-local ReplaySubject = require("replaysubject")
 local utils = require("utils")
 local xframes = require("xframes")
 
@@ -8,7 +8,7 @@ WidgetRegistrationService.__index = WidgetRegistrationService
 
 function WidgetRegistrationService.new()
     local obj = setmetatable({}, WidgetRegistrationService)
-    obj.events_subject = ReplaySubject.new(10)
+    obj.events_subject = Rx.ReplaySubject.create(10)
 
     obj.events_subject:subscribe(function(fn) 
         fn()

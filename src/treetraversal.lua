@@ -1,7 +1,7 @@
+local Rx = require("rx")
 local array = require("array")
 local luv = require("luv")
 local widgetnode = require("widgetnode")
-local ops = require("operators")
 local utils = require("utils")
 local WidgetTypes = require("WidgetTypes")
 
@@ -51,27 +51,18 @@ end
 
 function ShadowNodeTraversalHelper:subscribe_to_props_helper(shadow_node)
     if shadow_node.props_change_subscription then
-        shadow_node.props_change_subscription()
+        shadow_node.props_change_subscription:unsubscribe()
     end
 
     local renderable = shadow_node.renderable
-    local counter = 0
 
     if renderable.__type == "Component" then
-        shadow_node.props_change_subscription = renderable.props:subscribe(function(new_props)
-            if counter < 1 then
-                counter = counter + 1
-            else
-                self:handle_component_props_change(shadow_node, renderable, new_props)
-            end
+        shadow_node.props_change_subscription = renderable.props:skip(1):subscribe(function(new_props)
+            self:handle_component_props_change(shadow_node, renderable, new_props)
         end)
     elseif renderable.__type == "WidgetNode" then
-        shadow_node.props_change_subscription = renderable.props:subscribe(function(new_props)
-            if counter < 1 then
-                counter = counter + 1
-            else
-                self:handle_widget_node_props_change(shadow_node, renderable, new_props)
-            end
+        shadow_node.props_change_subscription = renderable.props:skip(1):subscribe(function(new_props)
+            self:handle_widget_node_props_change(shadow_node, renderable, new_props)
         end)
     end
 end

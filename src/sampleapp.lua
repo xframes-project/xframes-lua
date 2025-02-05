@@ -1,5 +1,5 @@
+local Rx = require("rx")
 local array = require("array")
-local BehaviorSubject = require("behaviorsubject")
 local theme = require("theme")
 local utils = require("utils")
 local widgetnode = require("widgetnode")
@@ -23,7 +23,7 @@ local function make_app_state(todo_text, todo_items)
 end
 
 
-local app_state = BehaviorSubject.new(make_app_state("", {
+local app_state = Rx.BehaviorSubject.create(make_app_state("", {
     make_todo_item("todo 1", false),
     make_todo_item("todo 2", false)
 }))
@@ -80,7 +80,7 @@ function module.App:render()
         widgetnode.button("Add todo", on_click, button_style)
     }
 
-    for _, todo_item in ipairs(self.props.value.todo_items) do
+    for _, todo_item in ipairs(self.props:getValue().todo_items) do
         local text = string.format("%s (%s).", todo_item.text, todo_item.done and "done" or "to do")
         table.insert(children, widgetnode.unformatted_text(text, text_style))
     end
