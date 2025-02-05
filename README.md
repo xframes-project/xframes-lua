@@ -37,6 +37,10 @@ You likely need to run these as `sudo`.
 
 Installing `luv` requires a x64 VS 2022 developer prompt.
 
+## Packaging the app
+
+I will eventually try to use https://github.com/ers35/luastatic to package standalone apps
+
 ## Screenshots
 
 Windows 11
